@@ -1,5 +1,5 @@
 alert("Hello GloAcademy!");
-console.log("its worhing!");
+console.log("its working yes!");
 
 const title = 1;
 const screens = 2;
