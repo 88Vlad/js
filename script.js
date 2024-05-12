@@ -1,8 +1,8 @@
 const title = "Project Vlad";
 const screens = "Simple, Complex, Interactive";
-const screenPrice = 50;
-const rollback = 80;
-const fullPrice = 30;
+const screenPrice = 30;
+const rollback = 60;
+const fullPrice = 90;
 const adaptive = true;
 console.log(typeof title);
 console.log(typeof fullPrice);
@@ -11,4 +11,4 @@ console.log(screens.length);
 console.log(screenPrice);
 console.log(fullPrice);
 console.log(screens.toLowerCase().split(", "));
-console.log(30 * (80 / 100));
+console.log(90 * (60 / 100));
