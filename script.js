@@ -1,14 +1,13 @@
-const title = "Project Vlad";
-const screens = "Simple, Complex, Interactive";
-const screenPrice = 30;
-const rollback = 60;
-const fullPrice = 90;
-const adaptive = true;
-console.log(typeof title);
-console.log(typeof fullPrice);
-console.log(typeof adaptive);
-console.log(screens.length);
-console.log(screenPrice);
-console.log(fullPrice);
-console.log(screens.toLowerCase().split(", "));
-console.log(90 * (60 / 100));
+var num = 266219;
+var product = 1;
+var numString = num.toString();
+for (var i = 0; i < numString.length; i++) {
+    product *= parseInt(numString[i]);
+}
+
+console.log("Произведение цифр:", product);
+var result = product * product * product;
+console.log("Результат возведения в степень 3:", result);
+var resultString = result.toString();
+var firstTwoDigits = parseInt(resultString.substring(0, 2));
+console.log("Первые две цифры полученного числа:", firstTwoDigits);
