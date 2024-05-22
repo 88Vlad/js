@@ -1,35 +1,60 @@
 'use strict';
-const title = prompt("Как называется ваш проект?");
-const screens = prompt("Какие типы экранов нужно разработать?", "Простые, Сложные, Интерактивные");
-const screenPrice = parseFloat(prompt("Сколько будет стоить данная работа?", "12000"));
-const adaptive = confirm("Нужен ли адаптив на сайте?");
-const service1 = prompt("Какой дополнительный тип услуги нужен?");
-const servicePrice1 = parseFloat(prompt(`Сколько стоит ${service1}?`));
-const service2 = prompt("Какой еще дополнительный тип услуги нужен?");
-const servicePrice2 = parseFloat(prompt(`Сколько стоит ${service2}?`));
-const fullPrice = screenPrice + servicePrice1 + servicePrice2;
-const rollbackPercentage = 10;
-const maxDiscountThreshold = 30000;
-const minDiscountThreshold = 15000;
-const servicePercentPrice = fullPrice - (fullPrice * (rollbackPercentage / 100));
-let discountMessage;
-switch (true) {
-    case fullPrice >= maxDiscountThreshold:
-        discountMessage = "Даем скидку в 10%";
-        break;
-    case fullPrice >= minDiscountThreshold:
-        discountMessage = "Даем скидку в 5%";
-        break;
-    default:
-        discountMessage = "Скидка не предусмотрена";
-        break;
+let title = prompt("Как называется ваш проект?");
+let screens = prompt("Какие типы экранов нужно разработать?");
+let screenPrice = +prompt("Сколько будет стоить данная работа?");
+let adaptive = confirm("Нужен ли адаптив на сайте?");
+let service1 = prompt("Какой дополнительный тип услуг нужен?");
+let servicePrice1 = +prompt("Сколько это будет стоить?");
+let service2 = prompt("Какой дополнительный тип услуг нужен?");
+let servicePrice2 = +prompt("Сколько это будет стоить?");
+let rollback = 20;
+let allServicePrices;
+let fullPrice;
+let servicePercentPrice;
+
+const getAllServicePrices = function () {
+    return servicePrice1 + servicePrice2;
+};
+
+const showTypeOf = function (variable) {
+    console.log(variable, typeof variable);
+};
+
+function getFullPrice() {
+    return screenPrice + allServicePrices;
 }
-console.log(title);
-console.log(screens);
-console.log(service1);
-console.log(servicePrice1);
-console.log(service2);
-console.log(servicePrice2);
-console.log(discountMessage);
-console.log("Итоговая стоимость работы:", fullPrice, "руб.");
-console.log("Итоговая стоимость работы с учетом отката посреднику:", servicePercentPrice.toFixed(2), "руб.");
+
+function getServicePercentPrice() {
+    return fullPrice * (1 - rollback / 100);
+}
+
+function getTitle(title) {
+    title = title.trim().toLowerCase();
+    return title.charAt(0).toUpperCase() + title.slice(1);
+}
+
+const getRollbackMessage = function (price) {
+    if (price >= 30000) {
+        return "Даем скидку в 10%";
+    } else if (price >= 15000 && price < 30000) {
+        return "Даем скидку в 5%";
+    } else if (price >= 0 && price < 15000) {
+        return "Скидка не предусмотрена";
+    } else {
+        return "Что-то пошло не так";
+    }
+};
+
+allServicePrices = getAllServicePrices();
+fullPrice = getFullPrice();
+servicePercentPrice = getServicePercentPrice();
+title = getTitle(title);
+
+showTypeOf(title);
+showTypeOf(screenPrice);
+showTypeOf(adaptive);
+
+console.log(`Типы экранов для разработки: ${screens}`);
+console.log(getRollbackMessage(fullPrice));
+console.log(`Стоимость за вычетом процента отката: ${servicePercentPrice}`);
+console.log(`Стоимость верстки экранов: ${screenPrice} рубли, и стоимость разработки сайта: ${fullPrice} рубли`);
