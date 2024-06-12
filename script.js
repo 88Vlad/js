@@ -1,25 +1,70 @@
 'use strict';
 
-let title = prompt("Как называется ваш проект?");
-let screens = prompt("Какие типы экранов нужно разработать?");
-let screenPrice = +prompt("Сколько будет стоить данная работа?");
-let adaptive = confirm("Нужен ли адаптив на сайте?");
-let service1 = prompt("Какой дополнительный тип услуг нужен?");
-let servicePrice1 = +prompt("Сколько это будет стоить?");
-let service2 = prompt("Какой дополнительный тип услуг нужен?");
-let servicePrice2 = +prompt("Сколько это будет стоить?");
-let rollback = 12;
-
-let allServicePrices;
+let title;
+let screens;
+let screenPrice;
+let adaptive;
+let allServicePrices = 0;
 let fullPrice;
 let servicePercentPrice;
+let service1;
+let service2;
 
-const getAllServicePrices = function () {
-    return servicePrice1 + servicePrice2;
+const isNumber = function (value) {
+    return !isNaN(parseFloat(value)) && isFinite(value);
 };
 
-const showTypeOf = function (variable) {
-    console.log(variable, typeof variable);
+const getValidNumber = function (question) {
+    let userInput;
+    let isValid = false;
+
+    do {
+        userInput = prompt(question);
+
+        if (userInput === null) {
+            return null; // Если пользователь нажал "Отмена", возвращаем null
+        }
+
+        const trimmedInput = userInput.trim();
+
+        if (isNumber(trimmedInput)) {
+            isValid = true;
+            return parseFloat(trimmedInput); // Возвращаем число после удаления пробелов
+        } else {
+            alert("Пожалуйста, введите число.");
+        }
+    } while (!isValid);
+};
+
+const asking = function () {
+    title = prompt("Как называется ваш проект?", "Калькулятор верстки");
+    screens = prompt("Какие типы экранов нужно разработать?", "Простые, сложные, интерактивные");
+
+    screenPrice = getValidNumber("Сколько будет стоить данная работа?");
+    if (screenPrice === null) {
+        return; // Если пользователь нажал "Отмена", выходим из функции
+    }
+
+    adaptive = confirm("Нужен ли адаптив на сайте?");
+};
+
+const getAllServicePrices = function () {
+    let sum = 0;
+    for (let i = 0; i < 2; i++) {
+        if (i === 0) {
+            service1 = prompt("Какой дополнительный тип услуг нужен?");
+        } else if (i === 1) {
+            service2 = prompt("Какой дополнительный тип услуг нужен?");
+        }
+
+        const servicePrice = getValidNumber("Сколько это будет стоить?");
+        if (servicePrice === null) {
+            return null; // Если пользователь нажал "Отмена", выходим из функции
+        }
+
+        sum += servicePrice;
+    }
+    return sum;
 };
 
 const getFullPrice = function () {
@@ -27,36 +72,27 @@ const getFullPrice = function () {
 };
 
 const getServicePercentPrice = function () {
-    return fullPrice * (1 - rollback / 100);
+    return fullPrice;
 };
 
-const getTitle = function (title) {
-    title = title.trim().toLowerCase();
-    return title.charAt(0).toUpperCase() + title.slice(1);
+const getTitle = function () {
+    return title.trim()[0].toUpperCase() + title.trim().substr(1).toLowerCase();
 };
 
-const getRollbackMessage = function (price) {
-    if (price >= 30000) {
-        return "Даем скидку в 10%";
-    } else if (price >= 15000 && price < 30000) {
-        return "Даем скидку в 5%";
-    } else if (price >= 0 && price < 15000) {
-        return "Скидка не предусмотрена";
-    } else {
-        return "Что-то пошло не так";
-    }
-};
-
+asking();
 allServicePrices = getAllServicePrices();
-fullPrice = getFullPrice();
-servicePercentPrice = getServicePercentPrice();
-title = getTitle(title);
+if (allServicePrices === null) {
+    console.log("Операция отменена пользователем.");
+} else {
+    fullPrice = getFullPrice();
+    servicePercentPrice = getServicePercentPrice();
+    title = getTitle();
 
-showTypeOf(title);
-showTypeOf(screenPrice);
-showTypeOf(adaptive);
-
-console.log(`Типы экранов для разработки: ${screens}`);
-console.log(getRollbackMessage(fullPrice));
-console.log(`Стоимость за вычетом процента отката: ${servicePercentPrice}`);
-console.log(`Стоимость верстки экранов: ${screenPrice} рубли, и стоимость разработки сайта: ${fullPrice} рубли`);
+    console.log("Название проекта:", title);
+    console.log("Стоимость верстки экранов:", screenPrice, "рублей");
+    console.log("Нужен ли адаптив?", adaptive);
+    console.log("Дополнительные услуги:", service1, service2);
+    console.log("Стоимость дополнительных услуг:", allServicePrices, "рублей");
+    console.log("Полная стоимость разработки сайта:", fullPrice, "рублей");
+    console.log("Стоимость со скидкой:", servicePercentPrice, "рублей");
+}
