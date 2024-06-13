@@ -1,27 +1,27 @@
-// Функция для генерации случайного числа в диапазоне от min до max
+// генерация случайного числа
 function getRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Функция для создания замыкания с загаданным числом
+// замыкание с загаданным числом
 function createGame() {
     const secretNumber = getRandomNumber(1, 100); // Генерируем случайное число от 1 до 100
 
-    // Функция для игры
+    // Функция игры
     function playGame() {
         const userNumber = prompt("Угадай число от 1 до 100");
 
-        // Проверка на отмену игры
+        // Проверка на отмену
         if (userNumber === null) {
             alert("Игра окончена");
             return;
         }
 
-        // Проверка на ввод числа
+        // Проверка на ввод 
         const parsedNumber = parseInt(userNumber, 10);
         if (isNaN(parsedNumber)) {
             alert("Введи число!");
-            playGame(); // Рекурсивный вызов функции playGame
+            playGame(); // Рекурсивный вызов  playGame
             return;
         }
 
@@ -31,19 +31,18 @@ function createGame() {
             return;
         }
 
-        // Подсказки для пользователя
+        // Подсказки
         if (parsedNumber < secretNumber) {
             alert("Загаданное число больше");
         } else {
             alert("Загаданное число меньше");
         }
 
-        playGame(); // Рекурсивный вызов функции playGame
+        playGame(); // Рекурсивный вызов playGame
     }
 
-    return playGame; // Возвращаем функцию playGame с замыканием
+    return playGame;
 }
-
-// Запуск игры
+// Запуск 
 const game = createGame();
 game();
