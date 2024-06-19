@@ -2,20 +2,29 @@
 
 const appData = {
     title: '',
-    screens: '',
+    screens: [],
     screenPrice: 0,
-    adaptive: false,
+    adaptive: true,
+    rollback: 10,
     allServicePrices: 0,
     fullPrice: 0,
     servicePercentPrice: 0,
-    service1: '',
-    service2: '',
-
-    isNumber: function (value) {
-        return !isNaN(parseFloat(value)) && isFinite(value);
+    services: {},
+    start: function () {
+        this.asking();
+        this.addPrices();
+        this.getAllServicePrices();
+        this.getFullPrice();
+        this.getServicePercentPrice();
+        this.getTitle();
+        this.logger();
     },
 
-    getValidNumber: function (question) {
+    isNumber: function (num) {
+        return !isNaN(parseFloat(num)) && isFinite(num);
+    },
+
+    getValidInput: function (question, isNumber) {
         let userInput;
         let isValid = false;
 
@@ -23,89 +32,87 @@ const appData = {
             userInput = prompt(question);
 
             if (userInput === null) {
-                return null; // eсли "Отмена" - null
+                return null; // если "Отмена" - null
             }
 
             const trimmedInput = userInput.trim();
 
-            if (this.isNumber(trimmedInput)) {
+            if (isNumber && this.isNumber(trimmedInput)) {
                 isValid = true;
                 return parseFloat(trimmedInput); // число после удаления пробелов
+            } else if (!isNumber && !isNaN(trimmedInput)) {
+                isValid = true;
+                return trimmedInput; // строка после удаления пробелов
             } else {
-                alert("Пожалуйста, введите число.");
+                alert("Пожалуйста, введите корректные данные.");
             }
         } while (!isValid);
     },
 
     asking: function () {
-        this.title = prompt("Как называется ваш проект?", "Калькулятор верстки");
-        this.screens = prompt("Какие типы экранов нужно разработать?", "Простые, сложные, интерактивные");
+        appData.title = this.getValidInput("Как называется ваш проект?", false);
 
-        this.screenPrice = this.getValidNumber("Сколько будет стоить данная работа?");
-        if (this.screenPrice === null) {
-            return; // Если "Отмена" - выходим из функции
+        for (let i = 0; i < 2; i++) {
+            const name = this.getValidInput("Какие типы экранов нужно разработать?", false);
+            const price = this.getValidInput("Сколько будет стоить данная работа?", true);
+            appData.screens.push({
+                id: i,
+                name,
+                price
+            });
         }
 
-        this.adaptive = confirm("Нужен ли адаптив на сайте?");
+        const services = {};
+        for (let i = 0; i < 2; i++) {
+            const name = this.getValidInput("Какой дополнительный тип услуги нужен?", false);
+            const price = this.getValidInput("Сколько это будет стоить?", true);
+            if (services[name]) {
+                services[`${name}_${Object.keys(services).length}`] = price;
+            } else {
+                services[name] = price;
+            }
+        }
+        appData.services = services;
+
+        appData.adaptive = confirm("Нужен ли адаптив на сайте?");
+    },
+
+    addPrices: function () {
+        appData.screenPrice = appData.screens.reduce((sum, item) => sum + item.price, 0);
     },
 
     getAllServicePrices: function () {
-        let sum = 0;
-        for (let i = 0; i < 2; i++) {
-            if (i === 0) {
-                this.service1 = prompt("Какой дополнительный тип услуг нужен?");
-            } else if (i === 1) {
-                this.service2 = prompt("Какой дополнительный тип услуг нужен?");
-            }
-
-            const servicePrice = this.getValidNumber("Сколько это будет стоить?");
-            if (servicePrice === null) {
-                return null; // Если  "Отмена" - выходим из функции
-            }
-
-            sum += servicePrice;
-        }
-        return sum;
+        appData.allServicePrices = Object.values(appData.services).reduce((sum, price) => sum + price, 0);
     },
 
     getFullPrice: function () {
-        return this.screenPrice + this.allServicePrices;
+        appData.fullPrice = appData.screenPrice + appData.allServicePrices;
     },
 
     getServicePercentPrice: function () {
-        return this.fullPrice;
+        appData.servicePercentPrice = appData.fullPrice - (appData.fullPrice * (appData.rollback / 100));
     },
-
     getTitle: function () {
-        return this.title.trim()[0].toUpperCase() + this.title.trim().substr(1).toLowerCase();
+        appData.title = appData.title.trim()[0].toUpperCase() + appData.title.trim().substr(1).toLowerCase();
     },
-
-    start: function () {
-        this.asking();
-        this.allServicePrices = this.getAllServicePrices();
-        if (this.allServicePrices === null) {
-            console.log("Операция отменена пользователем.");
+    getRollbackMessage: function (price) {
+        if (price >= 30000) {
+            return "Даем скидку в 10%";
+        } else if (price >= 15000 && price < 30000) {
+            return "Даем скидку в 5%";
+        } else if (price >= 0 && price < 15000) {
+            return "Скидка не предусмотрена";
         } else {
-            this.fullPrice = this.getFullPrice();
-            this.servicePercentPrice = this.getServicePercentPrice();
-            this.title = this.getTitle();
-            this.logger();
+            return "Что-то пошло не так";
         }
     },
 
     logger: function () {
-        console.log("Название проекта:", this.title);
-        console.log("Стоимость верстки экранов:", this.screenPrice, "рублей");
-        console.log("Нужен ли адаптив?", this.adaptive);
-        console.log("Дополнительные услуги:", this.service1, this.service2);
-        console.log("Стоимость дополнительных услуг:", this.allServicePrices, "рублей");
-        console.log("Полная стоимость разработки сайта:", this.fullPrice, "рублей");
-        console.log("Стоимость со скидкой:", this.servicePercentPrice, "рублей");
-
-        console.log("Свойства и методы объекта appData:");
-        for (let key in this) {
-            console.log(`${key}: ${this[key]}`);
-        }
+        console.log(appData.fullPrice);
+        console.log(appData.servicePercentPrice);
+        console.log(appData.screens);
+        console.log(appData.services);
     }
 };
+
 appData.start();
