@@ -1,95 +1,28 @@
 'use strict';
-const appData = {
-    title: '',
-    screens: [],
-    screenPrice: 0,
-    adaptive: true,
-    rollback: 12,
-    allServicePrices: 0,
-    fullPrice: 0,
-    servicePercentPrice: 0,
-    services: {},
-    start: function () {
-        appData.asking();
-        appData.addPrices();
-        appData.getFullPrice();
-        appData.getServicePercentPrice();
-        appData.getTitle();
-        appData.logger();
-    },
-    isNumber: function (num) {
-        return !isNaN(parseFloat(num)) && isFinite(num);
-    },
-    asking: function () {
-        do {
-            appData.title = prompt("Как называется ваш проект?");
-        } while (appData.title === '' || appData.title === null);
 
-        for (let i = 0; i < 2; i++) {
-            let name;
-            do {
-                name = prompt("Какие типы экранов нужно разработать?");
-            } while (name === '' || name === null);
-
-            let price = 0;
-            do {
-                price = prompt("Сколько будет стоить данная работа?");
-            } while (!appData.isNumber(price));
-
-            appData.screens.push({
-                id: i,
-                name: name,
-                price: +price
-            });
-        }
-
-        for (let i = 0; i < 2; i++) {
-            let name;
-            do {
-                name = prompt("Какой дополнительный тип услуг нужен?");
-            } while (name === '' || name === null);
-
-            let price = 0;
-            do {
-                price = prompt("Сколько это будет стоить?");
-            } while (!appData.isNumber(price));
-
-            appData.services[name] = +price;
-        }
-
-        appData.adaptive = confirm("Нужен ли адаптив на сайте?");
-    },
-    addPrices: function () {
-        appData.screenPrice = appData.screens.reduce((sum, item) => sum + +item.price, 0);
-
-        for (let key in appData.services) {
-            appData.allServicePrices += appData.services[key];
-        }
-    },
-    getFullPrice: function () {
-        appData.fullPrice = appData.screenPrice + appData.allServicePrices;
-    },
-    getServicePercentPrice: function () {
-        appData.servicePercentPrice = appData.fullPrice - (appData.fullPrice * (appData.rollback / 100));
-    },
-    getTitle: function () {
-        appData.title = appData.title.trim()[0].toUpperCase() + appData.title.trim().slice(1).toLowerCase();
-    },
-    getRollbackMessage: function (price) {
-        if (price >= 30000) {
-            return "Даем скидку в 10%";
-        } else if (price >= 15000 && price < 30000) {
-            return "Даем скидку в 5%";
-        } else if (price >= 0 && price < 15000) {
-            return "Скидка не предусмотрена";
-        } else {
-            return "Что-то пошло не так";
-        }
-    },
-    logger: function () {
-        console.log(appData.fullPrice);
-        console.log(appData.servicePercentPrice);
-        console.log(appData.screens);
-    }
-};
-appData.start();
+// 1. Заголовок "Калькулятор верстки"
+const title = document.getElementsByTagName('h1')[0];
+console.log(title);
+// 2. Кнопки "Рассчитать" и "Сброс" 
+const butCalculate = document.getElementsByClassName("handler_btn");
+console.log(butCalculate);
+// 3. Кнопка "+" 
+const butPlus = document.querySelector(".screen-btn");
+console.log(butPlus);
+// 4. Все элементы other-items и percent
+const otherItems1 = document.querySelectorAll(".other-items.percent");
+const otherItems2 = document.querySelectorAll(".other-items.number");
+console.log(otherItems1);
+console.log(otherItems2);
+// 5. input
+const inputRange = document.querySelector(".rollback input[type='range']");
+console.log(inputRange);
+// 6. span 
+const spanRange = document.querySelector(".rollback .range-value");
+console.log(spanRange);
+// 7. Все инпуты с классом total-input 
+const totalInputs = document.getElementsByClassName("total-input");
+console.log(totalInputs);
+// 8. Все блоки с классом screen в изменяемую переменную
+let listScreen = document.querySelectorAll(".screen");
+console.log(listScreen);
